@@ -1,6 +1,6 @@
 from socket import *
 
-serverPort = 1200
+serverPort = 12000
 
 # Make a TCP socket
 serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -19,6 +19,7 @@ while True:
     # Accept connection from a client
     cnSocket, addr = serverSocket.accept()
     # Print address of connected client
+    # Also prints port which is a random port the client's machine finds that is open.
     print(f"Connection from {addr}")
 
     # Receive
