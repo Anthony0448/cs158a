@@ -19,10 +19,6 @@ while True:
 
     # Make sure the input is at least n characters long and those first n characters are digits
     if len(original_sentence) >= n and original_sentence[:n].isdigit():
-        byte_size = int(original_sentence[:n])
-
-        print(f"Byte size: {byte_size}")
-
         break
     else:
         print(
