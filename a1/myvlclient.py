@@ -18,12 +18,11 @@ while True:
         f"Input lowercase sentence (first {n} characters are message length): ")
 
     # Make sure the input is at least n characters long and those first n characters are digits
-    if len(original_sentence) >= n and original_sentence[:n].isdigit():
+    if len(original_sentence) >= n and original_sentence[:n].isdigit() and len(original_sentence) == int(original_sentence[:n]) + n:
         break
     else:
         print(
-            f"Invalid input. The first {n} characters must be digits. Please try again.")
-
+            f"Invalid input. The first {n} characters must be digits and the size must match. Please try again.")
 
 encoded_original_sentence = original_sentence.encode()
 
@@ -36,10 +35,30 @@ for i in range(0, len(encoded_original_sentence), 64):
     # Send each 64 byte chunk
     clientSocket.send(chunk)
 
+# Receive response that can come in 64 byte chunks
+response_data = b''
 
-# Buffersize is 64
-modifiedSentence = clientSocket.recv(64)
+while True:
+    # Receive a 64 byte chunk
+    chunk = clientSocket.recv(64)
 
-print('From Server:', modifiedSentence.decode())
+    # If there are no more 64 byte chunks left to receive
+    if not chunk:
+        break
+
+    # Add up chunks to form complete message
+    response_data += chunk
+
+    # Check if we have at least the length prefix
+    if len(response_data) >= n:
+        # Get the length of the message that is given as the first n bytes
+        expected_len = int(response_data[:n].decode())
+
+        # Check if we have the complete message
+        if len(response_data) >= expected_len + n:
+            break
+
+modifiedSentence = response_data[:expected_len + n]
+print('From Server:', modifiedSentence[n:].decode())
 
 clientSocket.close()
