@@ -49,7 +49,7 @@ while True:
             if len(received_data) >= msg_len + n:
                 break
 
-    # Decode the message
+    # Decode the message at the end. No need to decode until full message is received
     sentence = received_data.decode()
 
     # Get the length of the message again
@@ -62,7 +62,7 @@ while True:
     processed = sentence[n:].upper()
     print(f"processed: {processed}")
 
-    # Prepare response with length prefix
+    # Prepare response with length prefix (different from msg_len because it includes the length prefix)
     response_len = str(len(processed))
 
     # Add the length prefix to the message
@@ -73,6 +73,7 @@ while True:
     # Send response in chunks of 64
     encoded_response = full_response.encode()
     for i in range(0, len(encoded_response), 64):
+        # Encode bytes from i to (i + 64) ; Like take bytes from 0 to (0 + 64) then 64 to 128
         chunk = encoded_response[i:i+64]
 
         cnSocket.send(chunk)
