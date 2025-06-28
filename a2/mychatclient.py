@@ -28,6 +28,11 @@ class ChatClientUser:
 
             print("Connected to chat server. Type 'exit' to close connection.")
 
+            # Start receiving thread
+            receive_thread = threading.Thread(target=self.receive_messages)
+            receive_thread.start()
+
+            # Start sending messages from main thread
             # Will not trigger disconnect until this ends
             self.send_messages()
 
@@ -38,6 +43,21 @@ class ChatClientUser:
         # Always end is a disconnect
         finally:
             self.disconnect()
+
+    def receive_messages(self):
+        # Receive messages from the server
+        while self.running:
+            try:
+                message = self.client_socket.recv(1024).decode()
+                # no if needed?
+                if message:
+                    print(message)
+                else:
+                    break
+            except socket.error:
+                break
+
+        self.running = False
 
     # Send messages to the server
     def send_messages(self):
