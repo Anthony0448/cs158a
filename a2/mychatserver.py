@@ -1,8 +1,6 @@
 from socket import *
 import threading
 
-# TODO: YOU NEED THEM THREADS TO ALLOW SOCKETS TO BE ACCEPTED AND CONTINUE TO RECEIVE MESSAGES
-
 
 class ChatServer:
     def __init__(self, host='localhost', port=12000):

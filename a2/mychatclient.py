@@ -1,8 +1,6 @@
 from socket import *
 import threading
 
-# TODO: Maybe add colors to help distinguish chat log users
-
 
 class ChatClientUser:
     # Built in function that is always executed when object is made
