@@ -1,7 +1,6 @@
 from socket import *
 import threading
 
-# TODO: Define functions that client and server need (use class)
 # TODO: Maybe add colors to help distinguish chat log users
 
 
@@ -49,10 +48,12 @@ class ChatClientUser:
         while self.running:
             try:
                 message = self.client_socket.recv(1024).decode()
-                # no if needed?
+
+                # If there's a message
                 if message:
                     print(message)
                 else:
+                    # No message no loop
                     break
             except socket.error:
                 break
