@@ -50,7 +50,7 @@ class ChatServer:
     def receive_client(self, client_socket, sender_port):
         try:
             while True:
-                # Receive message from client
+                # Receive message from client with a buffer of 1024
                 message = client_socket.recv(1024).decode()
 
                 # Check if client wants to exit
@@ -77,7 +77,7 @@ class ChatServer:
             # Send message to all clients except the sender (sender_port)
             if recipient_port != sender_port:
                 try:
-                    client_socket.send(message.encode())
+                    client_socket.send((f"{sender_port}: " + message).encode())
                 except socket.error:
                     self.remove_client_dictionary(
                         recipient_port, client_socket)

@@ -29,6 +29,8 @@ class ChatClientUser:
 
             # Start receiving thread
             receive_thread = threading.Thread(target=self.receive_messages)
+            # Make thread daemon so it exits when main thread exits (an error happens without this...)
+            receive_thread.daemon = True
             receive_thread.start()
 
             # Start sending messages from main thread
@@ -47,6 +49,7 @@ class ChatClientUser:
         # Receive messages from the server
         while self.running:
             try:
+                # Receive buffer of 1024
                 message = self.client_socket.recv(1024).decode()
 
                 # If there's a message
