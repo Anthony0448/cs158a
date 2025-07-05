@@ -1,6 +1,8 @@
 from socket import *
 import threading
 
+# TODO: Add locks on the shared resource (the dictionary) use with lock
+
 
 class ChatServer:
     def __init__(self, host='localhost', port=12000):
