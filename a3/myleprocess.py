@@ -19,10 +19,14 @@ class Message:
     def to_json(self):
         return json.dumps({"uuid": self.uuid, "flag": self.flag})
 
+    # Make a message from json
+    # It is static because it doesn't need to be an instance of the Message class to be called
     @staticmethod
     def from_json(data):
         obj = json.loads(data)
         return Message(obj["uuid"], obj["flag"])
+
+# The main class for the node that handles the server and client connections
 
 
 class Node:
@@ -35,7 +39,11 @@ class Node:
         self.peer_ip = None
         self.peer_port = None
 
-        self.peer_connection = None
+        # The incoming connection is the socket that the server accepts for receiving messages, not the client
+        self.incoming_connection = None
+        # The outgoing connection is the socket that the client connects for sending messages, not the server
+        self.outgoing_connection = None
+        # The server connection is the socket that the server accepts for sending messages, not the client
         self.server_connection = None
 
         self.leader_id = None
@@ -43,7 +51,7 @@ class Node:
         self.config_file = "a3/config.txt"
         self.log_file = "a3/logs/log1.txt"  # Added missing log_file attribute
 
-        # Load config when object is made
+        # Load config when object is made by calling the config function
         self.config()
 
     # Function to read the config file with IP addresses and ports
@@ -53,10 +61,13 @@ class Node:
                 lines = file.readlines()
 
                 # Set my ip and port as the first line in the document delimited by a comma
+                # strip() removes whitespace
                 self.my_ip, self.my_port = lines[0].strip().split(',')
+                # Convert port to int to be used in the server socket
                 self.my_port = int(self.my_port)
 
                 # Get the next peer's ip and port
+                # Comma delimiter
                 self.peer_ip, self.peer_port = lines[1].strip().split(',')
                 self.peer_port = int(self.peer_port)
         except Exception as e:
@@ -78,15 +89,58 @@ class Node:
         # Set the port according to the first line in the config file
         server_socket.bind(('', self.my_port))
 
-        # Await a connection to peer
+        # Await a single connection to peer node
         server_socket.listen(1)
-        print(f"log listening on {self.my_ip}:{self.my_port}")
+        print(f"Listening on {self.my_ip}:{self.my_port}")
 
+        # Accept connection to peer node
         peer_socket, peer_address = server_socket.accept()
         print(f"New connection from {peer_address}")
 
-        # Store peer connection
-        self.peer_connection = peer_socket
+        # Store peer socket connection to variable
+        self.incoming_connection = peer_socket
+
+        # Receive message from peer
+        self.receive_messages(peer_socket)
+
+    # Function to receive and process messages from peer
+    def receive_messages(self, peer_socket):
+        # The buffer is a string that stores the received data
+        buffer = ""
+
+        # Loop to receive messages from peer until the connection is closed
+        while True:
+            try:
+                # Receive data from peer the socket (We are in loop so this will keep receiving till message finishes)
+                data = peer_socket.recv(1024).decode()
+
+                # Break loop if there's no data
+                if not data:
+                    break
+
+                # Continuously build the string of data received from peer
+                buffer += data
+
+                # The loop splits the buffer into messages delimited by '\n'
+                while '\n' in buffer:
+                    message_str, buffer = buffer.split('\n', 1)
+
+                    # If the message is not empty, create a Message object from the string
+                    if message_str.strip():
+                        message = Message.from_json(message_str.strip())
+
+                        print(
+                            f"Received: uuid={message.uuid}, flag={message.flag}")
+
+                        self.log(
+                            f"Received message: {message.uuid}, flag={message.flag}")
+
+                        # Process the message (for now just echo it back)
+                        self.send(Message(self.uuid, message.flag))
+
+            except Exception as e:
+                print(f"Error receiving message: {e}")
+                break
 
     # Function to connect to peer node
     def receive_peer(self):
@@ -94,13 +148,14 @@ class Node:
         time.sleep(2)
 
         # Save peer socket connection to variable
-        self.peer_connection = socket(AF_INET, SOCK_STREAM)
+        self.outgoing_connection = socket(AF_INET, SOCK_STREAM)
 
         # Loop to connect to peer until successful
         while True:
             try:
                 # Connect to peer socket using peer ip and port provided in config file
-                self.peer_connection.connect((self.peer_ip, self.peer_port))
+                self.outgoing_connection.connect(
+                    (self.peer_ip, self.peer_port))
 
                 print(f"Connected to peer at {self.peer_ip}:{self.peer_port}")
 
@@ -115,11 +170,11 @@ class Node:
 
     # Function to send message to peer using passed Message object
     def send(self, message_object):
-        if self.peer_connection:
+        # Prefer outgoing_connection for sending, fallback to incoming_connection if not set
+        conn = self.outgoing_connection or self.incoming_connection
+        if conn:
             try:
-                self.peer_connection.sendall(
-                    (message_object.to_json() + '\n').encode())
-
+                conn.sendall((message_object.to_json() + '\n').encode())
                 print(
                     f"Sent: uuid={message_object.uuid}, flag={message_object.flag}")
             except Exception as e:
@@ -129,4 +184,23 @@ class Node:
 n = Node()
 print(f"Node created with UUID: {n.uuid}")
 print(f"My config: {n.my_ip}:{n.my_port}")
-print(f"Peer config: {n.peer_ip}:{n.peer_port}")
+print(f"Peer config: {n.peer_ip}:{n.peer_port}" + '\n')
+
+
+# Start the server in a separate thread to allow for concurrent connections
+server_thread = threading.Thread(target=n.node_server)
+# The daemon closes the thread when the code finishes/stops
+server_thread.daemon = True
+server_thread.start()
+
+# Start the client to connect to peer in a separate thread to allow for concurrent connections
+client_thread = threading.Thread(target=n.receive_peer)
+client_thread.daemon = True
+client_thread.start()
+
+# Keep main running continously to keep the server alive
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("Shutting down...")
