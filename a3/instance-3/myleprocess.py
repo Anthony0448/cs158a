@@ -40,8 +40,8 @@ class Node:
 
         self.leader_id = None
         self.lock = threading.Lock()
-        self.config_file = "a3/config.txt"
-        self.log_file = "a3/logs/log1.txt"  # Added missing log_file attribute
+        self.config_file = "a3/instance-3/config.txt"
+        self.log_file = "a3/logs/log3.txt"  # Added missing log_file attribute
 
         # Load config when object is made
         self.config()
@@ -60,10 +60,9 @@ class Node:
                 self.peer_ip, self.peer_port = lines[1].strip().split(',')
                 self.peer_port = int(self.peer_port)
         except Exception as e:
-            print("There was an error loading the config file: " +
-                  self.config_file + " " + str(e))
+            print("There was an error loading the config file: " + self.config_file)
+            print(f"Error: {e}")
 
-    # Function to write to log file
     def log(self, message):
         try:
             with open(self.log_file, 'a') as f:
@@ -71,7 +70,6 @@ class Node:
         except Exception as e:
             print(f"Cannot write to log: {e}")
 
-    # Function to start the server
     def node_server(self):
         # Establish TCP socket
         server_socket = socket(AF_INET, SOCK_STREAM)
@@ -88,15 +86,12 @@ class Node:
         # Store peer connection
         self.peer_connection = peer_socket
 
-    # Function to connect to peer node
     def receive_peer(self):
-        # Wait for 2 seconds before connecting to peer to ensure server is ready
         time.sleep(2)
 
         # Save peer socket connection to variable
         self.peer_connection = socket(AF_INET, SOCK_STREAM)
 
-        # Loop to connect to peer until successful
         while True:
             try:
                 # Connect to peer socket using peer ip and port provided in config file
@@ -113,7 +108,6 @@ class Node:
         # Send message with flag 0
         self.send(Message(self.uuid, 0))
 
-    # Function to send message to peer using passed Message object
     def send(self, message_object):
         if self.peer_connection:
             try:
