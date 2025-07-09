@@ -24,10 +24,9 @@ class Message:
         obj = json.loads(data)
         return Message(obj["uuid"], obj["flag"])
 
-# The main class for the node that handles the server and client connections
-
 
 class Node:
+    # The main class for the node that handles the server and client connections
     def __init__(self):
         self.uuid = uuid.uuid4()
         self.state = 0
@@ -101,7 +100,7 @@ class Node:
 
     # Function to receive and process messages from peer
     def receive_messages(self, peer_socket):
-        # The buffer is a string that stores the received data
+        # The buffer is a string that stores the received data as it is received
         buffer = ""
 
         # Loop to receive messages from peer until the connection is closed
@@ -111,13 +110,14 @@ class Node:
                 data = peer_socket.recv(1024).decode()
 
                 # Break loop if there's no data
-                if not data:
+                if (not data):
                     break
 
                 # Continuously build the string of data received from peer
                 buffer += data
 
-                # The loop splits the buffer into messages delimited by '\n'
+                # While there exists a new line character, keep receiving the message
+                # The \n is used to indicate the end of the message
                 while '\n' in buffer:
                     message_str, buffer = buffer.split('\n', 1)
 
@@ -129,17 +129,17 @@ class Node:
                         received_uuid = uuid.UUID(message.uuid)
 
                         # If received is greater, that uuid should be forwarded to the next node
-                        if received_uuid > self.uuid:
+                        if (received_uuid > self.uuid):
                             comparison = "greater"
                         # If equal, the uuid came back to the node meaning it should be the leader and is the largest
-                        elif received_uuid == self.uuid:
+                        elif (received_uuid == self.uuid):
                             comparison = "same"
                         # Current node has a uuid larger than the one it received, so pass its own uuid forward
                         else:
                             comparison = "less"
 
                         state_info = f"{self.state}"
-                        if self.state == 1 and self.leader_id:
+                        if (self.state == 1 and self.leader_id):
                             state_info += f" (leader: {self.leader_id})"
 
                         print(
@@ -172,13 +172,13 @@ class Node:
                                     # If the received uuid was greater than current Node, forward that uuid instead of its own
                                     self.send(Message(received_uuid, 0))
                                 else:
-                                    # If the current node has a greater uuid, then forward its own UUID
+                                    # If the current node has a greater uuid, then forward its own UUID and ignore received message
                                     self.log(
-                                        f"Received message ignored - forwarding own UUID: {self.uuid}")
+                                        f"Received message ignored. Forward own UUID: {self.uuid}")
                                     self.send(Message(self.uuid, 0))
                             case 1:
                                 # If a leader has already been selected
-                                if self.state == 0:
+                                if (self.state == 0):
                                     self.leader_id = received_uuid
                                     self.state = 1
 
@@ -189,7 +189,7 @@ class Node:
 
                                     # Send forward the message of leader found
                                     self.send(message)
-                                elif self.leader_id == received_uuid:
+                                elif (self.leader_id == received_uuid):
                                     # Stop the passing of leader announcement
                                     print("Election complete")
                                     self.log("Election complete")
@@ -223,20 +223,24 @@ class Node:
                 break
             except Exception as e:
                 print(f"Connection failed: {e}")
+
+                # Wait 1 second before trying again
                 time.sleep(1)
 
-        # Send message with flag 0
+        # Send message with flag 0 because no leader has been found yet
         self.send(Message(self.uuid, 0))
 
     # Function to send message to peer using passed Message object
     def send(self, message_object):
         # Use outgoing_connection to send messages to the next node in the ring
+        # Outgoing connection is the socket that the client connects for sending messages
         if self.outgoing_connection:
             try:
                 # Send message to peer. sendall is used to send the entire message in one go
+                # The \n is used to indicate the end of the message
                 self.outgoing_connection.sendall(
                     (message_object.to_json() + '\n').encode())
-                
+
                 print(
                     f"Sent: uuid={message_object.uuid}, flag={message_object.flag}")
                 self.log(
@@ -244,16 +248,18 @@ class Node:
             except Exception as e:
                 print(f"Failed to send: {e}")
         else:
-            print("No outgoing connections")
+            print("No outgoing connections :(")
 
 
 n = Node()
+
 print(f"Node created with UUID: {n.uuid}")
 print(f"My config: {n.my_ip}:{n.my_port}")
 print(f"Peer config: {n.peer_ip}:{n.peer_port}" + '\n')
 
 
 # Start the server in a separate thread to allow for concurrent connections
+# Use the node_server function to start the server
 server_thread = threading.Thread(target=n.node_server)
 # The daemon closes the thread when the code finishes/stops
 server_thread.daemon = True
