@@ -4,8 +4,6 @@ from socket import *
 import threading
 import json
 
-# TODO: Delimiter when serializing a Message object to JSON is '\n'
-
 
 class Message:
     # The message class allows for each node to send a message to its neighbor with a uuid and flag
@@ -39,12 +37,10 @@ class Node:
         self.peer_ip = None
         self.peer_port = None
 
-        # The incoming connection is the socket that the server accepts for receiving messages, not the client
+        # The incoming connection is the socket that the server accepts for receiving messages
         self.incoming_connection = None
-        # The outgoing connection is the socket that the client connects for sending messages, not the server
+        # The outgoing connection is the socket that the client connects for sending messages
         self.outgoing_connection = None
-        # The server connection is the socket that the server accepts for sending messages, not the client
-        self.server_connection = None
 
         self.leader_id = None
         self.lock = threading.Lock()
@@ -176,8 +172,10 @@ class Node:
                                     # If the received uuid was greater than current Node, forward that uuid instead of its own
                                     self.send(Message(received_uuid, 0))
                                 else:
-                                    # If the current node has a greater uuid, then
-                                    self.log("Smaller uuid")
+                                    # If the current node has a greater uuid, then forward its own UUID
+                                    self.log(
+                                        f"Received message ignored - forwarding own UUID: {self.uuid}")
+                                    self.send(Message(self.uuid, 0))
                             case 1:
                                 # If a leader has already been selected
                                 if self.state == 0:
@@ -193,6 +191,7 @@ class Node:
                                     self.send(message)
                                 elif self.leader_id == received_uuid:
                                     # Stop the passing of leader announcement
+                                    print("Election complete")
                                     self.log("Election complete")
 
                                     return
@@ -231,15 +230,21 @@ class Node:
 
     # Function to send message to peer using passed Message object
     def send(self, message_object):
-        # Prefer outgoing_connection for sending, fallback to incoming_connection if not set
-        conn = self.outgoing_connection or self.incoming_connection
-        if conn:
+        # Use outgoing_connection to send messages to the next node in the ring
+        if self.outgoing_connection:
             try:
-                conn.sendall((message_object.to_json() + '\n').encode())
+                # Send message to peer. sendall is used to send the entire message in one go
+                self.outgoing_connection.sendall(
+                    (message_object.to_json() + '\n').encode())
+                
                 print(
+                    f"Sent: uuid={message_object.uuid}, flag={message_object.flag}")
+                self.log(
                     f"Sent: uuid={message_object.uuid}, flag={message_object.flag}")
             except Exception as e:
                 print(f"Failed to send: {e}")
+        else:
+            print("No outgoing connections")
 
 
 n = Node()
