@@ -122,7 +122,6 @@ class Node:
                 buffer += data
 
                 # The loop splits the buffer into messages delimited by '\n'
-                # Redo
                 while '\n' in buffer:
                     message_str, buffer = buffer.split('\n', 1)
 
@@ -130,49 +129,76 @@ class Node:
                     if message_str.strip():
                         message = Message.from_json(message_str.strip())
 
-                        # print(
-                        #     f"Received: uuid={message.uuid}, flag={message.flag}")
-
-                        # self.log(
-                        #     f"Received message: {message.uuid}, flag={message.flag}")
-
-                        # # Process the message (for now just echo it back)
-                        # self.send(Message(self.uuid, message.flag))
-
-                        # If the message flag is already received to be 1, then leader is found
-
-                        # Use a switch statement because they're faster than if statements, I mean why not
-
+                        # Convert the uuid string to a UUID object
                         received_uuid = uuid.UUID(message.uuid)
 
-                        match message.flag:
-                            # Case 0 == no leader found, yet
-                            case 0:
-                                if (received_uuid > self.uuid):
-                                    # Forward this uuid to the next node
-                                    comparison = "greater"
-                                # If equal, the uuid came back to the node meaning it should be the leader and is the largest
-                                elif (received_uuid == self.uuid):
-                                    comparison = "equal"
+                        # If received is greater, that uuid should be forwarded to the next node
+                        if received_uuid > self.uuid:
+                            comparison = "greater"
+                        # If equal, the uuid came back to the node meaning it should be the leader and is the largest
+                        elif received_uuid == self.uuid:
+                            comparison = "same"
+                        # Current node has a uuid larger than the one it received, so pass its own uuid forward
+                        else:
+                            comparison = "less"
 
-                                    self.leader_id = self.uuid
-                                # Current node has a uuid larger than the one it received, so pass its own uuid forward
-                                else:
-                                    comparison = "less"
-                            # Case 1 == leader found
-                            case 1:
-                                print(
-                                    "As per received message, leader has been found")
+                        state_info = f"{self.state}"
+                        if self.state == 1 and self.leader_id:
+                            state_info += f" (leader: {self.leader_id})"
 
-                                # Update leader id to the one from the message
-                                self.leader_id = message.uuid
-
+                        print(
+                            f"Received: uuid={message.uuid}, flag={message.flag}, {comparison}, {state_info}")
                         self.log(
-                            f"Received: uuid={message.uuid}, flag={message.flag}, {comparison}")
+                            f"Received: uuid={message.uuid}, flag={message.flag}, {comparison}, {state_info}")
 
-                        # # If leader is determined then set state to 1
-                        # if (self.state == 1):
-                        #     pass
+                        match message.flag:
+                            # Case zero meaning a leader has not been selected, yet
+                            case 0:
+                                # If the same received uuid matches current Node, then it looped back here determining it is the largest
+                                if (comparison == "same"):
+                                    # Set leader uuid to current Node.
+                                    # Let other nodes know a leader was found
+                                    self.leader_id = self.uuid
+
+                                    # A state of 1 means a leader has been found
+                                    self.state = 1
+
+                                    # Log the found leader uuid
+                                    print(
+                                        f"Leader is decided to {self.leader_id}")
+                                    self.log(
+                                        f"Leader is decided to {self.leader_id}")
+
+                                    # Forward current Node's uuid to the peer (leader uuid)
+                                    # Send message that the flag is 1 because a leader was found
+                                    self.send(Message(self.uuid, 1))
+                                elif (comparison == "greater"):
+                                    # If the received uuid was greater than current Node, forward that uuid instead of its own
+                                    self.send(Message(received_uuid, 0))
+                                else:
+                                    # If the current node has a greater uuid, then
+                                    self.log("Smaller uuid")
+                            case 1:
+                                # If a leader has already been selected
+                                if self.state == 0:
+                                    self.leader_id = received_uuid
+                                    self.state = 1
+
+                                    print(
+                                        f"Leader is decided to {self.leader_id}")
+                                    self.log(
+                                        f"Leader is decided to {self.leader_id}")
+
+                                    # Send forward the message of leader found
+                                    self.send(message)
+                                elif self.leader_id == received_uuid:
+                                    # Stop the passing of leader announcement
+                                    self.log("Election complete")
+
+                                    return
+                                else:
+                                    # Forward announcement
+                                    self.send(message)
             except Exception as e:
                 print(f"Error receiving message: {e}")
                 break

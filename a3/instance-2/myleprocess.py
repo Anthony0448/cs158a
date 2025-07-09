@@ -111,7 +111,7 @@ class Node:
         # Loop to receive messages from peer until the connection is closed
         while True:
             try:
-                # Receive data from peer the socket
+                # Receive data from peer the socket (We are in loop so this will keep receiving till message finishes)
                 data = peer_socket.recv(1024).decode()
 
                 # Break loop if there's no data
@@ -129,15 +129,76 @@ class Node:
                     if message_str.strip():
                         message = Message.from_json(message_str.strip())
 
+                        # Convert the uuid string to a UUID object
+                        received_uuid = uuid.UUID(message.uuid)
+
+                        # If received is greater, that uuid should be forwarded to the next node
+                        if received_uuid > self.uuid:
+                            comparison = "greater"
+                        # If equal, the uuid came back to the node meaning it should be the leader and is the largest
+                        elif received_uuid == self.uuid:
+                            comparison = "same"
+                        # Current node has a uuid larger than the one it received, so pass its own uuid forward
+                        else:
+                            comparison = "less"
+
+                        state_info = f"{self.state}"
+                        if self.state == 1 and self.leader_id:
+                            state_info += f" (leader: {self.leader_id})"
+
                         print(
-                            f"Received: uuid={message.uuid}, flag={message.flag}")
-
+                            f"Received: uuid={message.uuid}, flag={message.flag}, {comparison}, {state_info}")
                         self.log(
-                            f"Received message: {message.uuid}, flag={message.flag}")
+                            f"Received: uuid={message.uuid}, flag={message.flag}, {comparison}, {state_info}")
 
-                        # Process the message (for now just echo it back)
-                        self.send(Message(self.uuid, message.flag))
+                        match message.flag:
+                            # Case zero meaning a leader has not been selected, yet
+                            case 0:
+                                # If the same received uuid matches current Node, then it looped back here determining it is the largest
+                                if (comparison == "same"):
+                                    # Set leader uuid to current Node.
+                                    # Let other nodes know a leader was found
+                                    self.leader_id = self.uuid
 
+                                    # A state of 1 means a leader has been found
+                                    self.state = 1
+
+                                    # Log the found leader uuid
+                                    print(
+                                        f"Leader is decided to {self.leader_id}")
+                                    self.log(
+                                        f"Leader is decided to {self.leader_id}")
+
+                                    # Forward current Node's uuid to the peer (leader uuid)
+                                    # Send message that the flag is 1 because a leader was found
+                                    self.send(Message(self.uuid, 1))
+                                elif (comparison == "greater"):
+                                    # If the received uuid was greater than current Node, forward that uuid instead of its own
+                                    self.send(Message(received_uuid, 0))
+                                else:
+                                    # If the current node has a greater uuid, then
+                                    self.log("Smaller uuid")
+                            case 1:
+                                # If a leader has already been selected
+                                if self.state == 0:
+                                    self.leader_id = received_uuid
+                                    self.state = 1
+
+                                    print(
+                                        f"Leader is decided to {self.leader_id}")
+                                    self.log(
+                                        f"Leader is decided to {self.leader_id}")
+
+                                    # Send forward the message of leader found
+                                    self.send(message)
+                                elif self.leader_id == received_uuid:
+                                    # Stop the passing of leader announcement
+                                    self.log("Election complete")
+
+                                    return
+                                else:
+                                    # Forward announcement
+                                    self.send(message)
             except Exception as e:
                 print(f"Error receiving message: {e}")
                 break
