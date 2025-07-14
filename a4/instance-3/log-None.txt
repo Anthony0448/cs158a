@@ -1,0 +1,16 @@
+Received: uuid=dc69e7af-2429-45af-a660-4ace0bcf9afb, flag=0, greater, 0
+Sent: uuid=ade6f3eb-5dd9-4bf1-979a-27acbdbfd3f7, flag=0
+Received: uuid=dc69e7af-2429-45af-a660-4ace0bcf9afb, flag=0, greater, 0
+Sent: uuid=dc69e7af-2429-45af-a660-4ace0bcf9afb, flag=0
+Received: uuid=dc69e7af-2429-45af-a660-4ace0bcf9afb, flag=1, greater, 0
+Leader is decided to dc69e7af-2429-45af-a660-4ace0bcf9afb
+Sent: uuid=dc69e7af-2429-45af-a660-4ace0bcf9afb, flag=1
+Sent: uuid=ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23, flag=0
+Received: uuid=8a241bd1-999a-4d9b-aac4-5097be318a92, flag=0, less, 0
+Received message ignored. Forward own UUID: ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23
+Sent: uuid=ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23, flag=0
+Received: uuid=ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23, flag=0, same, 0
+Leader is decided to ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23
+Sent: uuid=ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23, flag=1
+Received: uuid=ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23, flag=1, same, 1 (leader: ff0d88a7-ac1e-4b2a-a4bd-e23051f05e23)
+Election complete

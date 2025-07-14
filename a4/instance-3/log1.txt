@@ -1,8 +1,0 @@
-Received: uuid=3ebfb84a-2203-41fb-9342-63306bf0fb1b, flag=0, less, 0
-Received message ignored. Forward own UUID: c3e39d95-cd20-4523-bb23-aa1d73b924e0
-Sent: uuid=c3e39d95-cd20-4523-bb23-aa1d73b924e0, flag=0
-Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0, greater, 0
-Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0
-Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1, greater, 0
-Leader is decided to dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a
-Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1
