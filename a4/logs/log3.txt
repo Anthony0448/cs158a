@@ -1,0 +1,15 @@
+Received: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=0, greater, 0
+Sent: uuid=4bfae5bb-38f9-4617-a380-3da1522e8365, flag=0
+Received: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=0, greater, 0
+Sent: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=0
+Received: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=1, greater, 0
+Leader is decided to f55364ca-a61c-4513-8305-2797f6283e0d
+Sent: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=1Received: uuid=23bd73d9-7faa-478c-94cb-ed55c6669036, flag=0, less, 0
+Received message ignored. Forward own UUID: 6d71e9ec-004f-4f41-8084-79f8c98b9d67
+Sent: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=0
+Received: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=0, same, 0
+Leader is decided to 6d71e9ec-004f-4f41-8084-79f8c98b9d67
+Sent: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=1
+Received: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=1, same, 1 (leader: 6d71e9ec-004f-4f41-8084-79f8c98b9d67)
+Election complete
+Sent: uuid=856eef52-5479-4304-9736-995579049645, flag=0

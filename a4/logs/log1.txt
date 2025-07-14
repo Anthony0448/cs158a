@@ -1,0 +1,19 @@
+Sent: uuid=5b47d738-519d-437c-b6be-d3888df6a7d4, flag=0
+Received: uuid=4bfae5bb-38f9-4617-a380-3da1522e8365, flag=0, less, 0
+Received message ignored. Forward own UUID: 5b47d738-519d-437c-b6be-d3888df6a7d4
+Sent: uuid=5b47d738-519d-437c-b6be-d3888df6a7d4, flag=0
+Received: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=0, greater, 0
+Sent: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=0
+Received: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=1, greater, 0
+Leader is decided to f55364ca-a61c-4513-8305-2797f6283e0d
+Sent: uuid=f55364ca-a61c-4513-8305-2797f6283e0d, flag=1
+Sent: uuid=1b4b04d4-bec2-41e1-8083-cc47f577c44a, flag=0
+Received: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=0, greater, 0
+Sent: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=0
+Received: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=1, greater, 0
+Leader is decided to 6d71e9ec-004f-4f41-8084-79f8c98b9d67
+Sent: uuid=6d71e9ec-004f-4f41-8084-79f8c98b9d67, flag=1
+Received: uuid=08cf935c-e4b0-48dc-96d8-101005c48b5d, flag=0, less, 0
+Received message ignored. Forward own UUID: b46eb619-5574-44e9-b759-b7425ecfa5d8
+Received: uuid=7b23cbd7-eb32-450c-bdb4-963ef833e21c, flag=0, less, 0
+Received message ignored. Forward own UUID: b46eb619-5574-44e9-b759-b7425ecfa5d8
