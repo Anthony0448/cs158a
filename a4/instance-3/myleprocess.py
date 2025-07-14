@@ -44,7 +44,7 @@ class Node:
         self.leader_id = None
         self.lock = threading.Lock()
         self.config_file = "config.txt"
-        self.log_file = f"log-{self.my_port}.txt"  # Added missing log_file attribute
+        self.log_file = f"log-{self.uuid}.txt"
 
         # Load config when object is made by calling the config function
         self.config()
