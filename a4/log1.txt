@@ -1,0 +1,9 @@
+Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0
+Received: uuid=c3e39d95-cd20-4523-bb23-aa1d73b924e0, flag=0, less, 0
+Received message ignored. Forward own UUID: dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a
+Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0
+Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0, same, 0
+Leader is decided to dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a
+Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1
+Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1, same, 1 (leader: dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a)
+Election complete

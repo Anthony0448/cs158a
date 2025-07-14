@@ -43,8 +43,8 @@ class Node:
 
         self.leader_id = None
         self.lock = threading.Lock()
-        self.config_file = "a3/instance-2/config.txt"
-        self.log_file = "a3/logs/log2.txt"  # Added missing log_file attribute
+        self.config_file = "config.txt"
+        self.log_file = "log1.txt"  # Added missing log_file attribute
 
         # Load config when object is made by calling the config function
         self.config()
@@ -173,6 +173,7 @@ class Node:
                                     self.send(Message(received_uuid, 0))
                                 else:
                                     # If the current node has a greater uuid, then forward its own UUID and ignore received message
+                                    # Send own message
                                     self.log(
                                         f"Received message ignored. Forward own UUID: {self.uuid}")
                                     self.send(Message(self.uuid, 0))

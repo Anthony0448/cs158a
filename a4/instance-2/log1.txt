@@ -1,0 +1,7 @@
+Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0, greater, 0
+Sent: uuid=3ebfb84a-2203-41fb-9342-63306bf0fb1b, flag=0
+Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0, greater, 0
+Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=0
+Received: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1, greater, 0
+Leader is decided to dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a
+Sent: uuid=dfbf0268-735d-4fb4-bbf4-88ab39ff1d2a, flag=1

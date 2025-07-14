@@ -43,8 +43,8 @@ class Node:
 
         self.leader_id = None
         self.lock = threading.Lock()
-        self.config_file = "a3/config.txt"
-        self.log_file = "a3/logs/log1.txt"  # Added missing log_file attribute
+        self.config_file = "config.txt"
+        self.log_file = "log1.txt"  # Added missing log_file attribute
 
         # Load config when object is made by calling the config function
         self.config()
