@@ -1,9 +1,0 @@
-Sent: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0
-Received: uuid=54a52851-c415-44c5-8734-be73fd593da6, flag=0, less, 0
-Received message ignored. Forward own UUID: c51804c5-4778-46b5-8cc0-4c8ba8ef207e
-Sent: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0
-Received: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0, same, 0
-Leader is decided to c51804c5-4778-46b5-8cc0-4c8ba8ef207e
-Sent: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=1
-Received: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=1, same, 1 (leader: c51804c5-4778-46b5-8cc0-4c8ba8ef207e)
-Election complete

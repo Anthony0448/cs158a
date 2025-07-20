@@ -1,7 +1,0 @@
-Received: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0, greater, 0
-Sent: uuid=44859767-1d10-4dae-8622-be9a245dfeec, flag=0
-Received: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0, greater, 0
-Sent: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=0
-Received: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=1, greater, 0
-Leader is decided to c51804c5-4778-46b5-8cc0-4c8ba8ef207e
-Sent: uuid=c51804c5-4778-46b5-8cc0-4c8ba8ef207e, flag=1

@@ -1,0 +1,6 @@
+Sent: uuid=97e615e5-2c75-498f-9f2f-b12a989b37f9, flag=0
+Received: uuid=b85298b0-4fa6-4dca-9730-cd3e40a9f155, flag=0, greater, 0
+Sent: uuid=b85298b0-4fa6-4dca-9730-cd3e40a9f155, flag=0
+Received: uuid=b85298b0-4fa6-4dca-9730-cd3e40a9f155, flag=1, greater, 0
+Leader is decided to b85298b0-4fa6-4dca-9730-cd3e40a9f155
+Sent: uuid=b85298b0-4fa6-4dca-9730-cd3e40a9f155, flag=1
