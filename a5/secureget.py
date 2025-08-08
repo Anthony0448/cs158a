@@ -1,19 +1,20 @@
 from socket import *
 from ssl import *
 
-hostname = 'www.google.com'
-hostport = 443
+HOST = 'www.google.com'
+# HTTPS port!
+PORT = 443
 context = create_default_context()
 
 # Make a secure connection to the server using
-with create_connection((hostname, hostport)) as sock:
-    with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+with create_connection((HOST, PORT)) as sock:
+    with context.wrap_socket(sock, server_hostname=HOST) as ssock:
         print("SSL connection established")
         print(ssock.version())
 
         # \r and \n are needed to separate the HTML headers from the body
         http_request = (
-            f"GET / HTTP/1.1\r\nHost: {hostname}\r\nConnection: close\r\n\r\n")
+            f"GET / HTTP/1.1\r\nHost: {HOST}\r\nConnection: close\r\n\r\n")
 
         # Send GET request to the server
         ssock.send(http_request.encode('utf-8'))
