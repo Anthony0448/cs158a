@@ -5,7 +5,7 @@ hostname = 'www.google.com'
 hostport = 443
 context = create_default_context()
 
-# Make a secure connection to the server
+# Make a secure connection to the server using
 with create_connection((hostname, hostport)) as sock:
     with context.wrap_socket(sock, server_hostname=hostname) as ssock:
         print("SSL connection established")
@@ -40,8 +40,12 @@ with create_connection((hostname, hostport)) as sock:
         # The 1 is used to split the response into two parts
         parts = response.split('\r\n\r\n', 1)
 
-        # Save HTML content to a file
+        # Use parts to separate the headers and the body, so the header is not included in the body
+        headers, html_content = parts
+
+        # Save HTML content to an html file
         with open("response.html", 'w', encoding='utf-8') as f:
-            f.write(response)
+            # Use html_content to write to the file instead of response because response includes the headers
+            f.write(html_content)
 
         print("HTML content saved to response.html")
